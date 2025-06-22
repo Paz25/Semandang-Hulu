@@ -1,11 +1,13 @@
 "use client";
 
-import Image from "next/image";
-import HighlightCard from "@/components/HighlightCard";
-import Navbar from "@/components/Navbar";
 import { FaMapMarkerAlt, FaUsers, FaLeaf, FaSeedling } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { BsStars } from "react-icons/bs";
+
+import Image from "next/image";
+import HighlightCard from "@/components/HighlightCard";
+import Navbar from "@/components/Navbar";
+import PetaDesaSection from "./beranda/PetaDesaSection";
 
 export default function Beranda() {
   const [scrollY, setScrollY] = useState(0);
@@ -200,7 +202,7 @@ export default function Beranda() {
           </div>
 
           {/* Content */}
-          <div className="relative bg-[#0a160d]/35 z-10 py-15 h-full w-full flex items-center justify-center text-center text-white">
+          <div className="relative bg-[#0a160d]/35 z-10 py-15 px-6 h-full w-full flex items-center justify-center text-center text-white">
             <div
               id="stats-header"
               data-animate
@@ -228,7 +230,7 @@ export default function Beranda() {
                     data-animate
                     style={{ transitionDelay: `${index * 200}ms` }}
                   >
-                    <div className="text-3xl md:text-4xl font-semibold mb-2 text-white text-center">
+                    <div className="text-2xl md:text-3xl font-semibold mb-2 text-white text-center">
                       {stat.number}
                     </div>
                     <div className="text-base text-gray-300 text-center">
@@ -242,13 +244,7 @@ export default function Beranda() {
         </section>
 
         {/* Peta Desa */}
-        <section className="py-12 px-6 md:px-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Peta Desa</h2>
-          <p className="text-center text-gray-600 mb-6">
-            Lihat posisi strategis desa dalam satu tampilan
-          </p>
-          <div className="bg-gray-300 h-80 w-full rounded"></div>
-        </section>
+        <PetaDesaSection />
 
         {/* Warta Desa */}
         <section className="py-12 px-6 md:px-20">
