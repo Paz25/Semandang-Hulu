@@ -5,6 +5,7 @@ import HighlightCard from "@/components/HighlightCard";
 import Navbar from "@/components/Navbar";
 import { FaMapMarkerAlt, FaUsers, FaLeaf, FaSeedling } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
+import { BsStars } from "react-icons/bs";
 
 export default function Beranda() {
   const [scrollY, setScrollY] = useState(0);
@@ -80,13 +81,12 @@ export default function Beranda() {
   return (
     <div>
       <Navbar />
-      <main className="font-sans pt-18">
+      <main className="font-sans pt-12">
         {/* Hero Section */}
         <section
           id="home"
-          className="relative bg-cover bg-center h-[100vh] text-white flex flex-col justify-center items-center text-center"
+          className="relative bg-cover bg-center h-[100vh] text-white flex flex-col justify-center items-center text-center overflow-hidden"
         >
-          {/* Gambar sebagai background */}
           <div
             className="absolute inset-0 z-[-1]"
             style={{
@@ -128,7 +128,7 @@ export default function Beranda() {
             <div className="hidden md:block md:col-span-1"></div>
 
             <div className="md:col-span-6">
-              <h2 className="text-2xl font-semibold mb-4 text-[#0a160d]">
+              <h2 className="text-2xl font-semibold mb-2 text-[#0a160d]">
                 Tentang Desa Semandang Hulu
               </h2>
               <p className="text-gray-700 leading-relaxed">
@@ -144,58 +144,99 @@ export default function Beranda() {
         </section>
 
         {/* Highlight Section */}
-        <section className="py-12 px-6 md:px-20">
-          <h2 className="text-2xl font-bold text-center mb-2">
+        <section className="py-15 px-6 md:px-[100px] bg-stone-50">
+          <h2 className="text-2xl font-semibold mb-2 text-[#0a160d] text-center">
             Kenali Desa Semandang Hulu Lebih Dekat
           </h2>
           <p className="text-center text-gray-600 mb-8">
             Berbagai sisi kehidupan desa yang membentuk identitas dan potensi
             kami.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
             <HighlightCard
               icon={<FaMapMarkerAlt />}
               title="Lokasi"
-              text="Berada di Kabupaten Ketapang dengan akses yang semakin terbuka."
+              text="Berada di Kabupaten Ketapang dengan akses yang semakin terbuka berkat pembangunan infrastruktur desa."
             />
             <HighlightCard
               icon={<FaUsers />}
               title="Komunitas"
-              text="Warga hidup dengan gotong royong dan tradisi lokal yang kuat."
+              text="Warga hidup dengan semangat gotong royong, menjunjung nilai kebersamaan dan tradisi lokal yang kuat."
             />
             <HighlightCard
               icon={<FaLeaf />}
               title="Alam"
-              text="Hutan tropis dan perkebunan menjadi tumpuan mata pencaharian."
+              text="Dikelilingi hutan tropis, sungai kecil, dan perkebunan sawit yang menjadi tumpuan mata pencaharian."
             />
             <HighlightCard
-              icon={<FaSeedling />}
+              icon={<BsStars />}
               title="Potensi"
-              text="Kelapa sawit dan hasil tani menjadi sumber ekonomi utama."
+              text="Perkebunan kelapa sawit, hasil pertanian, dan produk lokal menjadi sumber daya unggulan masyarakat."
             />
           </div>
         </section>
 
         {/* Statistik Section */}
-        <section className="bg-green-900 text-white py-12 px-6 md:px-20">
-          <h2 className="text-2xl font-bold text-center mb-4">
-            Semandang Hulu Dalam Angka
-          </h2>
-          <p className="text-center text-green-200 mb-8">
-            Data singkat untuk mengenal desa lebih dekat.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-            <div>
-              <p className="text-3xl font-bold">516</p>
-              <p>Penduduk</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold">219</p>
-              <p>Keluarga</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold">167.600 ha</p>
-              <p>Luas Wilayah</p>
+        <section
+          id="stats"
+          className="relative bg-cover bg-center text-white flex flex-col justify-center items-center text-center overflow-hidden "
+        >
+          <div
+            className="absolute inset-0 z-0 will-change-transform"
+            style={{
+              transform: `translateY(${scrollY * 0.4}px)`,
+              top: "-300%",
+              height: "200%",
+            }}
+          >
+            <Image
+              src="/images/bg3.png"
+              alt="Background Statistik"
+              width={1920}
+              height={1080}
+              className="object-cover"
+              priority
+            />
+          </div>
+
+          {/* Content */}
+          <div className="relative bg-[#0a160d]/35 z-10 py-15 h-full w-full flex items-center justify-center text-center text-white">
+            <div
+              id="stats-header"
+              data-animate
+              className={`w-full h-full ${getAnimationClass("stats-header")}`}
+              style={{ transitionDelay: "0ms" }}
+            >
+              <h2 className="text-2xl font-semibold text-center mb-2">
+                Semandang Hulu Dalam Angka
+              </h2>
+              <p className="text-center mb-8">
+                Statistik utama Desa Semandang Hulu.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center items-center max-w-4xl mx-auto text-white">
+                {[
+                  { number: "516", label: "Penduduk" },
+                  { number: "219", label: "Keluarga" },
+                  { number: "217.430 ha", label: "Luas wilayah" },
+                ].map((stat, index) => (
+                  <div
+                    key={index}
+                    id={`stats-${index}`}
+                    className={`flex-1 p-6 rounded-2xl backdrop-blur-lg bg-white/10 border border-white/20 shadow-md ${getAnimationClass(
+                      `stats-${index}`
+                    )}`}
+                    data-animate
+                    style={{ transitionDelay: `${index * 200}ms` }}
+                  >
+                    <div className="text-3xl md:text-4xl font-semibold mb-2 text-white text-center">
+                      {stat.number}
+                    </div>
+                    <div className="text-base text-gray-300 text-center">
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>

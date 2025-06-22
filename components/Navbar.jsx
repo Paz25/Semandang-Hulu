@@ -25,10 +25,10 @@ export default function Navbar() {
     <>
       {/* Navbar Top */}
       <nav className="fixed z-50 w-full bg-[#0A160D] text-white shadow-md">
-        <div className="flex justify-between items-center px-6 md:px-[100px] py-4 xs:max-w-75">
+        <div className="flex justify-between items-center px-6 md:px-[100px] xs:max-w-75 items-stretch">
           {/* Logo */}
           <div
-            className="flex items-center gap-2 font-semibold cursor-pointer"
+            className="flex items-center gap-2 font-semibold cursor-pointer my-2"
             onClick={() => router.push("/")}
           >
             <img
@@ -40,21 +40,28 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex gap-10 items-center text-base">
+          <div className="hidden lg:flex gap-10 items-center text-base">
             {menuItems.map((item, index) => (
-              <p
+              <div
                 key={index}
-                className="cursor-pointer hover:text-green-400"
+                className="relative group overflow-hidden cursor-pointer flex items-center px-2 h-full"
                 onClick={() => handleNavClick(item.path)}
               >
-                {item.label}
-              </p>
+                <span className="relative z-10 transition-colors duration-300 group-hover:text-[#0A160D]">
+                  {item.label}
+                </span>
+                <span
+                  className="absolute inset-0 bg-white opacity-0 -translate-x-full
+                    group-hover:opacity-100 group-hover:translate-x-0
+                    transition-all duration-300 ease-in-out"
+                ></span>
+              </div>
             ))}
           </div>
 
           {/* Hamburger Icon */}
           <button
-            className="mt-1 flex md:hidden text-white text-2xl fixed top-5 right-6 z-[60] transition-transform duration-300"
+            className="mt-1 flex justify-center items-center lg:hidden text-white text-2xl top-5 right-6 z-[60] transition-transform duration-300"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? (
