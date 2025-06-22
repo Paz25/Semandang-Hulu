@@ -1,9 +1,9 @@
 export default function PetaDesaSection() {
   return (
-    <section className="py-15 px-6 md:px-20 bg-white">
-      <h2 className="text-2xl font-semibold text-center mb-2">Peta Desa</h2>
-      <p className="text-center text-gray-600 mb-6">
-        Lihat posisi strategis desa dalam satu tampilan
+    <section className="py-15 px-6 md:px-[100px] bg-stone-50">
+      <h2 className="text-2xl font-semibold text-center mb-2 text-[#0a160d]">Peta Desa</h2>
+      <p className="text-center text-[#0a160d] mb-10">
+        Lihat posisi strategis Desa Semandang Hulu dalam satu tampilan
       </p>
       <div className="rounded overflow-hidden shadow-lg h-150 w-full">
         <iframe

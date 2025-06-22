@@ -150,7 +150,7 @@ export default function Beranda() {
           <h2 className="text-2xl font-semibold mb-2 text-[#0a160d] text-center">
             Kenali Desa Semandang Hulu Lebih Dekat
           </h2>
-          <p className="text-center text-gray-600 mb-8">
+          <p className="text-center text-[#0a160d] mb-10">
             Berbagai sisi kehidupan desa yang membentuk identitas dan potensi
             kami.
           </p>
@@ -212,7 +212,7 @@ export default function Beranda() {
               <h2 className="text-2xl font-semibold text-center mb-2">
                 Semandang Hulu Dalam Angka
               </h2>
-              <p className="text-center mb-8">
+              <p className="text-center mb-10">
                 Statistik utama Desa Semandang Hulu.
               </p>
               <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center items-center max-w-4xl mx-auto text-white">
@@ -247,9 +247,11 @@ export default function Beranda() {
         <PetaDesaSection />
 
         {/* Warta Desa */}
-        <section className="py-12 px-6 md:px-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Warta Desa</h2>
-          <p className="text-center text-gray-600 mb-6">
+        <section className="py-15 px-6 md:px-[100px] bg-stone-50">
+          <h2 className="text-2xl font-semibold mb-2 text-[#0a160d] text-center">
+            Warta Desa
+          </h2>
+          <p className="text-center text-[#0a160d] mb-10">
             Informasi terbaru seputar kegiatan, pengumuman, dan kehidupan warga
             Semandang Hulu.
           </p>
@@ -259,35 +261,57 @@ export default function Beranda() {
                 date: "02 Juli 2025",
                 title:
                   "Mahasiswa KKN UAJY Resmi Disambut di Desa Semandang Hulu",
+                header_img:
+                  "https://lldikti5.kemdikbud.go.id/assets/images/posts/medium/tn_lldikti5_20240801150010.jpg",
                 content:
                   "Sebanyak 9 mahasiswa Universitas Atma Jaya Yogyakarta resmi memulai kegiatan KKN di Desa Semandang Hulu...",
               },
               {
                 date: "15 Juli 2025",
                 title: "Gotong Royong Perbaikan Jalan Antar-Dusun Dimulai",
+                header_img:
+                  "https://th.bing.com/th/id/OIP.-1n_lsGSt_gfU1RypVwd1gHaE8?r=0&rs=1&pid=ImgDetMain&cb=idpwebp2&o=7&rm=3",
                 content:
                   "Warga Desa Semandang Hulu bersama-sama memperbaiki jalan yang menghubungkan dusun-dusun utama...",
               },
               {
                 date: "21 Juni 2025",
                 title: "Pelatihan Digitalisasi UMKM di Balai Desa",
+                header_img:
+                  "https://i.pinimg.com/736x/a1/c3/ec/a1c3eca0021357b9094cd282c09a5800.jpg",
                 content:
                   "Sebanyak 25 pelaku usaha mengikuti pelatihan digitalisasi untuk memasarkan produk lokal secara online...",
               },
             ].map((berita, idx) => (
-              <div key={idx} className="bg-white rounded shadow-md p-4">
-                <p className="text-sm text-gray-500 mb-1">{berita.date}</p>
-                <h3 className="font-semibold text-lg mb-2">{berita.title}</h3>
-                <p className="text-sm text-gray-600">{berita.content}</p>
-                <button className="mt-2 text-green-700 text-sm font-semibold">
-                  Baca Selengkapnya →
-                </button>
+              <div key={idx} className="bg-white rounded shadow-md">
+                <img
+                  src={berita.header_img}
+                  alt="Tag Price"
+                  className="max-h-60 w-full object-cover"
+                />
+                <div className="p-6">
+                  <p className="text-sm text-gray-500 mb-1 text-[#0a160d]">
+                    {berita.date}
+                  </p>
+                  <h3 className="font-semibold text-lg mb-2 text-[#0a160d]">
+                    {berita.title}
+                  </h3>
+                  <p className="text-sm text-[#0a160d] text-[#0a160d]">
+                    {berita.content}
+                  </p>
+                  <button className="mt-2 text-[#97a202] text-sm font-semibold">
+                    Baca Selengkapnya →
+                  </button>
+                </div>
               </div>
             ))}
           </div>
           <div className="text-center mt-8">
-            <button className="px-6 py-2 border border-green-700 text-green-700 rounded hover:bg-green-700 hover:text-white">
-              Lihat Berita Lainnya
+            <button className="relative px-6 py-2 border-2 border-[#3F552F] hover:border-[#97A202] text-[#3F552F] rounded overflow-hidden group cursor-pointer">
+              <span className="absolute inset-0 w-0 bg-[#97A202] transition-all duration-300 ease-out group-hover:w-full"></span>
+              <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
+                Lihat Berita Lainnya
+              </span>
             </button>
           </div>
         </section>
