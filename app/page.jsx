@@ -1,19 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  FaMapMarkerAlt,
-  FaUsers,
-  FaLeaf,
-  FaPhoneAlt,
-  FaEnvelope,
-} from "react-icons/fa";
+import { FaMapMarkerAlt, FaUsers, FaLeaf } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 
 import Image from "next/image";
 import HighlightCard from "@/components/HighlightCard";
 import Navbar from "@/components/Navbar";
-import PetaDesaSection from "../components/PetaDesaSection";
+import PetaDesaSection from "@/components/PetaDesaSection";
+import Footer from "@/components/Footer";
 
 export default function Beranda() {
   const [scrollY, setScrollY] = useState(0);
@@ -21,7 +16,6 @@ export default function Beranda() {
   const [visibleElements, setVisibleElements] = useState(new Set());
   const [sectionStates, setSectionStates] = useState({});
   const [heroTextVisible, setHeroTextVisible] = useState(false);
-  // New state to control the parallax effect for the hero text
   const [heroTextParallaxEnabled, setHeroTextParallaxEnabled] = useState(true);
   const observerRef = useRef(null);
 
@@ -36,7 +30,6 @@ export default function Beranda() {
   }, [lastScrollY]);
 
   useEffect(() => {
-    // Trigger hero text animation after a short delay
     const timer = setTimeout(() => {
       setHeroTextVisible(true);
     }, 300);
@@ -51,17 +44,6 @@ export default function Beranda() {
               ...prev,
               [sectionId]: "visible",
             }));
-          } else {
-            // No change for exiting elements to maintain "visible" state
-            // setVisibleElements((prev) => {
-            //   const newSet = new Set(prev);
-            //   newSet.delete(sectionId);
-            //   return newSet;
-            // });
-            // setSectionStates((prev) => ({
-            //   ...prev,
-            //   [sectionId]: "exit",
-            // }));
           }
         });
       },
@@ -78,8 +60,6 @@ export default function Beranda() {
   }, []);
 
   const handleHeroTextTransitionEnd = () => {
-    // Once the initial fade-in/slide-down transition is complete,
-    // disable the parallax effect for the text.
     setHeroTextParallaxEnabled(false);
   };
 
@@ -90,10 +70,8 @@ export default function Beranda() {
     const state = getSectionState(id);
 
     if (state === "visible") {
-      // Once visible, it stays visible
       return `opacity-100 translate-y-0 transition-all duration-800 ease-out`;
     } else {
-      // Initial state before becoming visible (always fades in from bottom)
       return `opacity-0 translate-y-12 transition-all duration-800 ease-out`;
     }
   };
@@ -128,11 +106,10 @@ export default function Beranda() {
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 -translate-y-12"
               }`}
-              // Conditionally apply transform based on heroTextParallaxEnabled
               style={{
                 transform: heroTextParallaxEnabled
                   ? `translateY(${scrollY * 0.2}px)`
-                  : 'translateY(0px)', // Set to 0px (or initial position) after animation
+                  : "translateY(0px)",
               }}
               onTransitionEnd={handleHeroTextTransitionEnd}
             >
@@ -150,7 +127,7 @@ export default function Beranda() {
         <section
           id="about-us"
           data-animate
-          className="py-15 px-6 md:px-[100px] bg-stone-50"
+          className="py-20 px-6 md:px-[100px] bg-white"
         >
           <div
             className={`grid grid-cols-1 md:grid-cols-12 gap-8 items-center ${getAnimationClass(
@@ -164,10 +141,24 @@ export default function Beranda() {
             <div className="hidden md:block md:col-span-1"></div>
 
             <div className="md:col-span-6">
-              <h2 className="text-2xl font-semibold mb-2 text-[#0a160d]">
+              <h2
+                id="about-title"
+                data-animate
+                className={`text-2xl font-semibold mb-2 text-[#0a160d] text-center md:text-left ${getAnimationClass(
+                  "about-title"
+                )}`}
+                style={{ transitionDelay: "0ms" }}
+              >
                 Tentang Desa Semandang Hulu
               </h2>
-              <p className="text-gray-700 leading-relaxed">
+              <p
+                id="stats-subtitle"
+                data-animate
+                className={`text-gray-700 leading-relaxed text-center md:text-left ${getAnimationClass(
+                  "stats-subtitle"
+                )}`}
+                style={{ transitionDelay: "200ms" }}
+              >
                 Desa Semandang Hulu adalah salah satu desa yang terletak di
                 Kecamatan Simpang Hulu, Kabupaten Ketapang, Kalimantan Barat.
                 Dikelilingi oleh hutan dan perkebunan sawit, desa ini memiliki
@@ -182,16 +173,31 @@ export default function Beranda() {
         {/* Highlight Section */}
         <section
           id="highlights"
-          data-animate
-          className="py-15 px-6 md:px-[100px] bg-stone-50"
+          className="pb-20 pt-10 px-6 md:px-[100px] bg-white"
         >
-          <h2 className="text-2xl font-semibold mb-2 text-[#0a160d] text-center">
+          <h2
+            id="highlight-title"
+            data-animate
+            className={`text-2xl font-semibold mb-2 text-[#0a160d] text-center ${getAnimationClass(
+              "highlight-title"
+            )}`}
+            style={{ transitionDelay: "0ms" }}
+          >
             Kenali Desa Semandang Hulu Lebih Dekat
           </h2>
-          <p className="text-center text-[#0a160d] mb-10">
+
+          <p
+            id="highlight-subtitle"
+            data-animate
+            className={`text-center text-[#0a160d] mb-10 ${getAnimationClass(
+              "highlight-subtitle"
+            )}`}
+            style={{ transitionDelay: "200ms" }}
+          >
             Berbagai sisi kehidupan desa yang membentuk identitas dan potensi
             kami.
           </p>
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
             <HighlightCard
               icon={<FaMapMarkerAlt />}
@@ -199,7 +205,8 @@ export default function Beranda() {
               text="Berada di Kabupaten Ketapang dengan akses yang semakin terbuka berkat pembangunan infrastruktur desa."
               id="highlight-lokasi"
               dataAnimate={true}
-              animationDelay="0ms" // Add delay for staggered effect
+              animationDelay="400ms"
+              getAnimationClass={getAnimationClass}
             />
             <HighlightCard
               icon={<FaUsers />}
@@ -207,7 +214,8 @@ export default function Beranda() {
               text="Warga hidup dengan semangat gotong royong, menjunjung nilai kebersamaan dan tradisi lokal yang kuat."
               id="highlight-komunitas"
               dataAnimate={true}
-              animationDelay="200ms"
+              animationDelay="600ms"
+              getAnimationClass={getAnimationClass}
             />
             <HighlightCard
               icon={<FaLeaf />}
@@ -215,7 +223,8 @@ export default function Beranda() {
               text="Dikelilingi hutan tropis, sungai kecil, dan perkebunan sawit yang menjadi tumpuan mata pencarian."
               id="highlight-alam"
               dataAnimate={true}
-              animationDelay="400ms"
+              animationDelay="800ms"
+              getAnimationClass={getAnimationClass}
             />
             <HighlightCard
               icon={<BsStars />}
@@ -223,7 +232,8 @@ export default function Beranda() {
               text="Perkebunan kelapa sawit, hasil pertanian, dan produk lokal menjadi sumber daya unggulan masyarakat."
               id="highlight-potensi"
               dataAnimate={true}
-              animationDelay="600ms"
+              animationDelay="1000ms"
+              getAnimationClass={getAnimationClass}
             />
           </div>
         </section>
@@ -252,7 +262,7 @@ export default function Beranda() {
           </div>
 
           {/* Content */}
-          <div className="relative bg-[#0a160d]/35 z-10 py-15 px-6 h-full w-full flex items-center justify-center text-center text-white">
+          <div className="relative bg-[#0a160d]/35 z-10 py-20 px-6 h-full w-full flex items-center justify-center text-center text-white">
             <div
               id="stats-header"
               data-animate
@@ -267,9 +277,9 @@ export default function Beranda() {
               </p>
               <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center items-center max-w-4xl mx-auto text-white">
                 {[
-                  { number: "516", label: "Penduduk" },
-                  { number: "219", label: "Keluarga" },
-                  { number: "217.430 ha", label: "Luas wilayah" },
+                  { number: "1.842", label: "Penduduk" },
+                  { number: "529", label: "Keluarga" },
+                  { number: "11.500 ha", label: "Luas wilayah" },
                 ].map((stat, index) => (
                   <div
                     key={index}
@@ -294,18 +304,54 @@ export default function Beranda() {
         </section>
 
         {/* Peta Desa */}
-        <PetaDesaSection />
+        <section className="py-15 px-6 md:px-[100px] bg-white">
+          <h2
+            id="peta-title"
+            data-animate
+            className={`text-2xl font-semibold mb-2 text-[#0a160d] text-center ${getAnimationClass(
+              "peta-title"
+            )}`}
+            style={{ transitionDelay: "0ms" }}
+          >
+            Peta Desa Semandang Hulu
+          </h2>
+
+          <p
+            id="peta-subtitle"
+            data-animate
+            className={`text-center text-[#0a160d] mb-10 ${getAnimationClass(
+              "peta-subtitle"
+            )}`}
+            style={{ transitionDelay: "100ms" }}
+          >
+            Lokasi geografis Desa Semandang Hulu dan batas-batas wilayahnya.
+          </p>
+          <PetaDesaSection getAnimationClass={getAnimationClass} />
+        </section>
 
         {/* Warta Desa */}
         <section
           id="warta-desa"
-          data-animate
-          className="py-15 px-6 md:px-[100px] bg-stone-50"
+          className="py-20 px-6 md:px-[100px] bg-white"
         >
-          <h2 className="text-2xl font-semibold mb-2 text-[#0a160d] text-center">
+          <h2
+            id="warta-title"
+            data-animate
+            className={`text-2xl font-semibold mb-2 text-[#0a160d] text-center ${getAnimationClass(
+              "warta-title"
+            )}`}
+            style={{ transitionDelay: "0ms" }}
+          >
             Warta Desa
           </h2>
-          <p className="text-center text-[#0a160d] mb-10">
+          <p
+            id="warta-subtitle"
+            data-animate
+            className={`text-center text-[#0a160d] mb-10 ${getAnimationClass(
+              "warta-subtitle"
+            )}`}
+            style={{ transitionDelay: "200ms" }}
+          >
             Informasi terbaru seputar kegiatan, pengumuman, dan kehidupan warga
             Semandang Hulu.
           </p>
@@ -372,7 +418,7 @@ export default function Beranda() {
             id="warta-button"
             data-animate
             className={`text-center mt-8 ${getAnimationClass("warta-button")}`}
-            style={{ transitionDelay: "600ms" }}
+            style={{ transitionDelay: "400ms" }}
           >
             <button className="relative px-6 py-2 border-2 border-[#3F552F] hover:border-[#97A202] text-[#3F552F] rounded overflow-hidden group cursor-pointer">
               <span className="absolute inset-0 w-0 bg-[#97A202] transition-all duration-300 ease-out group-hover:w-full"></span>
@@ -384,51 +430,7 @@ export default function Beranda() {
         </section>
 
         {/* Footer */}
-        <footer
-          id="footer-section"
-          data-animate
-          className={`bg-[#3F552F] text-white py-10 px-6 md:px-20 grid md:grid-cols-3 gap-6 text-sm`}
-        >
-          <div className="flex flex-col gap-3">
-            <img
-              src="images/logo/logo_semandang.png"
-              alt=""
-              className="w-20 aspect-auto"
-            />
-            <h4 className="font-semibold text-xl">Desa Semandang Hulu</h4>
-            <p className="text-sm">
-              Desa Semandang Hulu, Kecamatan Simpang Hulu, Kabupaten Ketapang,
-              Provinsi Kalimantan Barat, 78850
-            </p>
-          </div>
-          <div className="flex flex-col gap-3">
-            <h4 className="font-semibold text-lg">Navigasi Cepat</h4>
-            <ul className="space-y-2 text-sm cursor-pointer">
-              <li>Beranda</li>
-              <li>Profil Desa</li>
-              <li>Warta Desa</li>
-              <li>Galeri</li>
-              <li>Download Area</li>
-            </ul>
-          </div>
-          <div className="flex flex-col gap-3">
-            <h4 className="font-semibold text-lg">Informasi Kontak</h4>
-            <div className="flex items-center gap-2">
-              <FaPhoneAlt />
-              <p>(+62) 812-3456-7890</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaEnvelope />
-              <p>semandang.hulu@ketapang.go.id</p>
-            </div>
-          </div>
-        </footer>
-        <div className="md:col-span-3 flex flex-col md:flex-row  py-4 px-10 justify-between text-center md:text-left items-center text-gray-400 text-xs md:text-sm bg-black">
-          <p>© 2025 Desa Semandang Hulu. All rights reserved.</p>
-          <p className="md:mt-0">
-            Dikembangkan oleh <strong>KKN 89 Semandang Hulu UAJY</strong>
-          </p>
-        </div>
+        <Footer />
       </main>
     </div>
   );

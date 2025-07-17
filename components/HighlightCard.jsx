@@ -1,15 +1,16 @@
-export default function HighlightCard({ icon, title, text }) {
+export default function HighlightCard({ icon, title, text, id, dataAnimate, animationDelay, getAnimationClass }) {
   return (
-    <div className="group hover:bg-[#F2F8F2] hover:text-white flex flex-col items-center text-center gap-2 px-6 py-6 bg-white rounded shadow-md transition-all duration-300 transform hover:scale-105 hover:bg-[#3f552f] hover:text-white">
-      <div className="text-[#3f552f] text-3xl transition-colors duration-300">
+    <div
+      id={id}
+      data-animate={dataAnimate}
+      className={`p-6 rounded-xl bg-white shadow-md text-center ${getAnimationClass(id)}`}
+      style={{ transitionDelay: animationDelay }}
+    >
+      <div className="text-[#3f552f] mb-2 text-3xl transition-colors duration-300 flex justify-center">
         {icon}
       </div>
-      <h4 className="font-semibold text-lg text-[#0a160d] transition-colors duration-300">
-        {title}
-      </h4>
-      <p className="text-sm text-gray-600 transition-colors duration-300">
-        {text}
-      </p>
+      <h3 className="text-lg font-semibold text-[#0a160d] mb-2">{title}</h3>
+      <p className="text-sm text-[#0a160d]">{text}</p>
     </div>
   );
 }

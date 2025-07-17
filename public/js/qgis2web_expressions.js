@@ -763,8 +763,8 @@ function exp_label_BatasDesa_6_eval_expression(context) {
     var feature = context.feature;
     
     if (feature.properties) {
-        return 'Desa Simpang Hulu';
+        return 'Desa Semandang Hulu';
     } else {
-        return 'Desa Simpang Hulu';
+        return 'Desa Semandang Hulu';
     }
 }
