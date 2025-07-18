@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { PiPlantFill, PiTreePalmFill } from "react-icons/pi";
+import { BsStars } from "react-icons/bs";
+
 import Image from "next/image";
 import PetaDesaSection from "@/components/PetaDesaSection";
+import PerangkatDesaSection from "@/components/PerangkatDesaSection";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { FaMapMarkerAlt, FaLeaf } from "react-icons/fa";
-import { PiPlantFill, PiTreePalmFill } from "react-icons/pi";
-
-import { BsStars } from "react-icons/bs";
 
 export default function ProfilDesa() {
   const [scrollY, setScrollY] = useState(0);
@@ -127,7 +127,7 @@ export default function ProfilDesa() {
         <section
           id="sejarah"
           data-animate
-          className="py-20 px-6 md:px-[100px] bg-white"
+          className="py-20 px-6 md:px-[100px] flex flex-col items-center bg-white"
         >
           <h2
             id="sejarah-title"
@@ -139,20 +139,29 @@ export default function ProfilDesa() {
           >
             Sejarah Singkat
           </h2>
-          <p
-            id="sejarah-subtitle"
-            data-animate
-            className={`text-center text-[#0a160d] ${getAnimationClass(
-              "sejarah-subtitle"
-            )}`}
-            style={{ transitionDelay: "200ms" }}
-          >
-            Desa Semandang Hulu berdiri secara administratif sejak tahun 1990.
-            Nama desa ini berasal dari aliran Sungai Semandang yang menjadi
-            pusat kehidupan masyarakat pada masa itu. Dalam perjalanannya, desa
-            ini telah mengalami banyak perkembangan baik dari sisi sosial maupun
-            ekonomi.
-          </p>
+
+          <div className="w-full grid grid-cols-1 md:grid-cols-12">
+            <div
+              id="sejarah-subtitle"
+              data-animate
+              className={`md:col-span-10 md:col-start-2 ${getAnimationClass(
+                "sejarah-subtitle"
+              )}`}
+              style={{ transitionDelay: "200ms" }}
+            >
+              <p className="text-center text-[#0a160d] leading-relaxed">
+                Desa Semandang Hulu berdiri secara administratif sejak tahun
+                1990. Nama desa ini berasal dari aliran Sungai Semandang yang
+                menjadi pusat kehidupan masyarakat pada masa itu.
+                <br />
+                <br />
+                Desa Semandang Hulu terdiri dari 14 RT dan 3 dusun: Dusun
+                Kesiau, Dusun Pateh Ada, dan Dusun Muara Kasai. Dalam
+                perjalanannya, desa ini telah mengalami banyak perkembangan baik
+                dari sisi sosial maupun ekonomi.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* Letak Geografis */}
@@ -192,12 +201,10 @@ export default function ProfilDesa() {
               </ul>
             </div>
 
-            <div className="hidden md:block md:col-span-1"></div>
-
             <div
               id="lokasi-map"
               data-animate
-              className={`md:col-span-5 ${getAnimationClass("lokasi-map")}`}
+              className={`md:col-span-6 ${getAnimationClass("lokasi-map")}`}
               style={{
                 transitionDelay: "200ms",
                 maxHeight: "400px",
@@ -293,7 +300,7 @@ export default function ProfilDesa() {
           <h2
             id="potensi-title"
             data-animate
-            className={`text-2xl font-semibold mb-4 text-[#0a160d] text-center ${getAnimationClass(
+            className={`text-2xl font-semibold mb-2 text-[#0a160d] text-center ${getAnimationClass(
               "potensi-title"
             )}`}
             style={{ transitionDelay: "0ms" }}
@@ -360,19 +367,20 @@ export default function ProfilDesa() {
 
         {/* Struktur Pemerintahan */}
         <section
-          id="pemerintahan"
+          id="perangkat-desa"
           data-animate
-          className={`py-15 px-6 md:px-[100px] bg-white`}
+          className="py-20 px-6 md:px-[100px] bg-white"
         >
-          <h2 className="text-2xl font-semibold mb-4 text-[#0a160d]">
-            Struktur Pemerintahan Desa
+          <h2
+            id="perangkat-title"
+            data-animate
+            className={`text-2xl font-semibold mb-10 text-[#0a160d] text-center ${
+              getAnimationClass ? getAnimationClass("perangkat-title") : ""
+            }`}
+          >
+            Perangkat Desa
           </h2>
-          <ul className="text-gray-700 leading-relaxed list-disc list-inside">
-            <li>Kepala Desa: John Doe</li>
-            <li>Sekretaris Desa: Jane Smith</li>
-            <li>Bendahara: Agus Prabowo</li>
-            <li>Ketua BPD: Siti Aminah</li>
-          </ul>
+          <PerangkatDesaSection getAnimationClass={getAnimationClass} />
         </section>
 
         {/* Footer */}

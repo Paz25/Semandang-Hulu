@@ -18,13 +18,13 @@ export default function Navbar() {
 
   const handleNavClick = (path) => {
     router.push(path);
-    setIsOpen(false); // close sidebar after click
+    setIsOpen(false);
   };
 
   return (
     <>
       {/* Navbar Top */}
-      <nav className="fixed z-50 w-full bg-[#0A160D] text-white shadow-md">
+      <nav className="fixed z-50 w-full bg-[#3F552F] text-white shadow-md">
         <div className="flex justify-between items-center px-6 md:px-[100px] xs:max-w-75 items-stretch">
           {/* Logo */}
           <div

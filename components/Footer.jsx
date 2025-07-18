@@ -59,10 +59,10 @@ export default function Footer() {
           </div>
         </div>
       </footer>
-      <div className="md:col-span-3 flex flex-col md:flex-row  py-4 px-10 justify-between text-center md:text-left items-center text-gray-400 text-xs md:text-sm bg-black">
+      <div className="md:col-span-3 flex flex-col md:flex-row py-4 px-10 justify-between text-center md:text-left items-center text-gray-400 text-xs md:text-sm bg-black">
         <p>© 2025 Desa Semandang Hulu. All rights reserved.</p>
         <p className="md:mt-0">
-          Dikembangkan oleh <strong>KKN 89 Semandang Hulu UAJY</strong>
+          Dikembangkan oleh <strong>KKN 87 Kelompok 89 UAJY</strong>
         </p>
       </div>
     </>
