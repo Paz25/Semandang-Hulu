@@ -2,6 +2,7 @@
 
 import { FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Footer() {
   const router = useRouter();
@@ -22,11 +23,13 @@ export default function Footer() {
         className={`bg-[#3F552F] text-white py-10 px-6 md:px-20 grid md:grid-cols-3 gap-6 text-sm`}
       >
         <div className="flex flex-col gap-3">
-          <img
-            src="images/logo/logo_semandang.png"
-            alt=""
-            className="w-20 aspect-auto"
+          <Image
+            src="/images/logo/logo_semandang.png"
+            alt="Logo"
+            width={40}
+            height={40}
           />
+
           <h4 className="font-semibold text-xl">Desa Semandang Hulu</h4>
           <p className="text-sm">
             Desa Semandang Hulu, Kecamatan Simpang Hulu, Kabupaten Ketapang,

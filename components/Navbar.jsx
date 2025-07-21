@@ -59,7 +59,7 @@ export default function Navbar() {
             {/* Tambahan Login Admin */}
             <div
               className="relative group overflow-hidden cursor-pointer flex items-center px-2 h-full"
-              onClick={() => handleNavClick("/admin/login")}
+              onClick={() => handleNavClick("/login")}
             >
               <span className="relative z-10 transition-colors duration-300 group-hover:text-[#97A202]">
                 Login Admin
@@ -114,7 +114,7 @@ export default function Navbar() {
           {/* Tambahan Login Admin di mobile */}
           <p
             className="cursor-pointer hover:text-[#97A202] text-md pt-4 border-t border-white/20"
-            onClick={() => handleNavClick("/admin/login")}
+            onClick={() => handleNavClick("/login")}
           >
             Login Admin
           </p>

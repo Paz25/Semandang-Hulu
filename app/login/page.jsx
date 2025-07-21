@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
+              className="w-full border border-gray-300 text-[#3F552F] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
               placeholder="Masukkan username"
             />
           </div>
@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
+              className="w-full border border-gray-300 text-[#3F552F] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
               placeholder="Masukkan password"
             />
           </div>
