@@ -10,7 +10,7 @@ import PerangkatDesaSection from "@/components/PerangkatDesaSection";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-export default function ProfilDesa() {
+export default function ProfilDesaPage() {
   const [scrollY, setScrollY] = useState(0);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [visibleElements, setVisibleElements] = useState(new Set());

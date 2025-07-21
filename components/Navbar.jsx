@@ -13,7 +13,6 @@ export default function Navbar() {
     { label: "Profil Desa", path: "/profil" },
     { label: "Galeri", path: "/galeri" },
     { label: "Warta Desa", path: "/warta" },
-    { label: "Download Area", path: "/download" },
   ];
 
   const handleNavClick = (path) => {
@@ -23,7 +22,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Navbar Top */}
       <nav className="fixed z-50 w-full bg-[#3F552F] text-white shadow-md">
         <div className="flex justify-between items-center px-6 md:px-[100px] xs:max-w-75 items-stretch">
           {/* Logo */}
@@ -57,6 +55,21 @@ export default function Navbar() {
                 ></span>
               </div>
             ))}
+
+            {/* Tambahan Login Admin */}
+            <div
+              className="relative group overflow-hidden cursor-pointer flex items-center px-2 h-full"
+              onClick={() => handleNavClick("/admin/login")}
+            >
+              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#97A202]">
+                Login Admin
+              </span>
+              <span
+                className="absolute inset-0 bg-white opacity-0 -translate-x-full
+                  group-hover:opacity-100 group-hover:translate-x-0
+                  transition-all duration-300 ease-in-out"
+              ></span>
+            </div>
           </div>
 
           {/* Hamburger Icon */}
@@ -76,14 +89,12 @@ export default function Navbar() {
       {/* Overlay */}
       <div
         className={`fixed inset-0 bg-black z-40 transition-opacity duration-300 ${
-          isOpen
-            ? "opacity-50 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+          isOpen ? "opacity-50 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setIsOpen(false)}
       ></div>
 
-      {/* Sidebar Menu (slide in from right) */}
+      {/* Sidebar Menu (Mobile) */}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#0A160D] text-white z-40 transform transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "translate-x-full"
@@ -93,12 +104,20 @@ export default function Navbar() {
           {menuItems.map((item, index) => (
             <p
               key={index}
-              className="cursor-pointer hover:text-[#97a202] text-md"
+              className="cursor-pointer hover:text-[#97A202] text-md"
               onClick={() => handleNavClick(item.path)}
             >
               {item.label}
             </p>
           ))}
+
+          {/* Tambahan Login Admin di mobile */}
+          <p
+            className="cursor-pointer hover:text-[#97A202] text-md pt-4 border-t border-white/20"
+            onClick={() => handleNavClick("/admin/login")}
+          >
+            Login Admin
+          </p>
         </div>
       </div>
     </>

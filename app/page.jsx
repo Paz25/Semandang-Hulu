@@ -10,7 +10,7 @@ import Navbar from "@/components/Navbar";
 import PetaDesaSection from "@/components/PetaDesaSection";
 import Footer from "@/components/Footer";
 
-export default function Beranda() {
+export default function BerandaPage() {
   const [scrollY, setScrollY] = useState(0);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [visibleElements, setVisibleElements] = useState(new Set());
@@ -63,7 +63,6 @@ export default function Beranda() {
     setHeroTextParallaxEnabled(false);
   };
 
-  const isVisible = (id) => visibleElements.has(id);
   const getSectionState = (id) => sectionStates[id] || "hidden";
 
   const getAnimationClass = (id) => {
