@@ -20,7 +20,6 @@ export default function AdminWartaPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Simulasi kirim data (replace dengan API call)
     console.log({
       judul,
       konten,
@@ -29,7 +28,6 @@ export default function AdminWartaPage() {
 
     alert("Berita berhasil disimpan!");
 
-    // Reset form
     setJudul("");
     setKonten("");
     setGambar(null);
@@ -37,7 +35,7 @@ export default function AdminWartaPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-100 p-6 md:p-12">
+    <main className="min-h-screen p-6 md:p-12">
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
         <h1 className="text-2xl font-bold mb-6 text-[#0a160d]">
           Dashboard Admin - Tambah Warta Desa

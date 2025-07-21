@@ -5,18 +5,29 @@ import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Contoh validasi sederhana (ganti sesuai backend nanti)
-    if (username === "admin" && password === "admin123") {
-      router.push("/admin/dashboard"); // Redirect ke dashboard admin
-    } else {
-      setError("Username atau password salah!");
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (res.ok) {
+        router.push("/admin");
+      } else {
+        const data = await res.json();
+        setError(data.message);
+      }
+    } catch (err) {
+      setError("Terjadi kesalahan saat login.");
     }
   };
 
@@ -27,21 +38,20 @@ export default function AdminLoginPage() {
           Login Admin
         </h2>
 
-        {error && (
-          <p className="text-red-500 text-center mb-4">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Username
+              Email
             </label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-300 text-[#3F552F] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
-              placeholder="Masukkan username"
+              placeholder="Masukkan email"
+              required
             />
           </div>
 
@@ -55,6 +65,7 @@ export default function AdminLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border border-gray-300 text-[#3F552F] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
               placeholder="Masukkan password"
+              required
             />
           </div>
 
