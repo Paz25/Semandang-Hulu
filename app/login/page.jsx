@@ -24,10 +24,14 @@ export default function AdminLoginPage() {
         router.push("/admin");
       } else {
         const data = await res.json();
-        setError(data.message);
+        setError(data.message || "Login gagal. Coba lagi.");
+        console.error("Login gagal:", data); // Tambahan log untuk debugging
       }
     } catch (err) {
-      setError("Terjadi kesalahan saat login.");
+      console.error("Error saat mengirim permintaan login:", err);
+      setError(
+        err.message || "Terjadi kesalahan saat login. Silakan coba beberapa saat lagi."
+      );
     }
   };
 

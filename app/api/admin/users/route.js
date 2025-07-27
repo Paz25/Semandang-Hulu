@@ -6,30 +6,40 @@ export async function GET(req) {
   try {
     verifyTokenFromCookie(req);
 
-    const [users] = await db.query("SELECT id, name, email FROM users");
-    return Response.json(users);
-
+    const [rows] = await db.query("SELECT id, name, email FROM users");
+    return Response.json(rows);
   } catch (err) {
-    return new Response(JSON.stringify({ message: err.message }), { status: 401 });
+    console.error("GET /api/admin/users error:", err);
+    return new Response(
+      JSON.stringify({
+        message:
+          err.message || "Terjadi kesalahan saat mengambil data pengguna",
+      }),
+      { status: 401 }
+    );
   }
 }
 
 export async function POST(req) {
   try {
-    verifyToken(req);
+    verifyTokenFromCookie(req); // diperbaiki: semula 'verifyToken'
 
     const { name, email, password } = await req.json();
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await db.query("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", [
-      name,
-      email,
-      hashedPassword,
-    ]);
+    await db.query(
+      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+      [name, email, hashedPassword]
+    );
 
     return Response.json({ message: "User berhasil ditambahkan" });
-
   } catch (err) {
-    return new Response(JSON.stringify({ message: err.message }), { status: 401 });
+    console.error("POST /api/admin/users error:", err); // log error di server
+    return new Response(
+      JSON.stringify({
+        message: err.message || "Terjadi kesalahan saat menambahkan user",
+      }),
+      { status: 401 }
+    );
   }
 }
