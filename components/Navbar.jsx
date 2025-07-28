@@ -61,7 +61,7 @@ export default function Navbar() {
               className="relative group overflow-hidden cursor-pointer flex items-center px-2 h-full"
               onClick={() => handleNavClick("/login")}
             >
-              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#97A202]">
+              <span className="relative z-10 transition-colors duration-300 group-hover:text-[#0A160D]">
                 Login Admin
               </span>
               <span

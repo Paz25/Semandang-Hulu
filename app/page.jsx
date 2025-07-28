@@ -243,12 +243,8 @@ export default function BerandaPage() {
           className="relative bg-cover bg-center text-white flex flex-col justify-center items-center text-center overflow-hidden "
         >
           <div
-            className="absolute inset-0 z-0 will-change-transform"
-            style={{
-              transform: `translateY(${scrollY * 0.4}px)`,
-              top: "-300%",
-              height: "200%",
-            }}
+            className="absolute inset-0 z-0 will-change-transform top-[-235%] h-[150%] md:top-[-200%] md:h-[200%]"
+            style={{ transform: `translateY(${scrollY * 0.4}px)` }}
           >
             <Image
               src="/images/bg3.png"
@@ -329,10 +325,7 @@ export default function BerandaPage() {
         </section>
 
         {/* Warta Desa */}
-        <section
-          id="warta-desa"
-          className="py-20 px-6 md:px-[100px] bg-white"
-        >
+        <section id="warta-desa" className="py-20 px-6 md:px-[100px] bg-white">
           <h2
             id="warta-title"
             data-animate
