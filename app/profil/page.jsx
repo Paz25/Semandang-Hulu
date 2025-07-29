@@ -200,18 +200,24 @@ export default function ProfilDesaPage() {
                 <li>Sebelah Barat: Desa Balai Pinang Hulu</li>
               </ul>
             </div>
-
+                
             <div
               id="lokasi-map"
               data-animate
-              className={`md:col-span-6 ${getAnimationClass("lokasi-map")}`}
+              className={`relative md:col-span-6 h-auto rounded overflow-auto ${getAnimationClass(
+                "lokasi-map"
+              )}`}
               style={{
                 transitionDelay: "200ms",
-                maxHeight: "400px",
-                overflow: "hidden",
               }}
             >
-              <PetaDesaSection getAnimationClass={getAnimationClass} />
+              <Image
+                src="/images/profil/PETA 1700 X 1100.png"
+                alt="Tentang Desa"
+                width={1700}
+                height={1100}
+                className="w-full h-auto"
+              />
             </div>
           </div>
         </section>

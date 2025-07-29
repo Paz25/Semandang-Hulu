@@ -5,6 +5,7 @@ import { FaMapMarkerAlt, FaUsers, FaLeaf } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 
 import Image from "next/image";
+import Link from "next/link";
 import HighlightCard from "@/components/HighlightCard";
 import Navbar from "@/components/Navbar";
 import PetaDesaSection from "@/components/PetaDesaSection";
@@ -13,11 +14,24 @@ import Footer from "@/components/Footer";
 export default function BerandaPage() {
   const [scrollY, setScrollY] = useState(0);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [visibleElements, setVisibleElements] = useState(new Set());
   const [sectionStates, setSectionStates] = useState({});
   const [heroTextVisible, setHeroTextVisible] = useState(false);
   const [heroTextParallaxEnabled, setHeroTextParallaxEnabled] = useState(true);
   const observerRef = useRef(null);
+
+  const [berita, setBerita] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  function formatTanggal(dateString) {
+    const options = {
+      weekday: "long",
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    };
+
+    return new Date(dateString).toLocaleDateString("id-ID", options);
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,7 +53,6 @@ export default function BerandaPage() {
         entries.forEach((entry) => {
           const sectionId = entry.target.id;
           if (entry.isIntersecting) {
-            setVisibleElements((prev) => new Set([...prev, sectionId]));
             setSectionStates((prev) => ({
               ...prev,
               [sectionId]: "visible",
@@ -57,6 +70,29 @@ export default function BerandaPage() {
       clearTimeout(timer);
       observerRef.current?.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && berita.length > 0) {
+      const elements = document.querySelectorAll("[data-animate]");
+      elements.forEach((el) => observerRef.current?.observe(el));
+    }
+  }, [isLoading, berita]);
+
+  useEffect(() => {
+    const fetchBerita = async () => {
+      try {
+        const response = await fetch("/api/news");
+        const data = await response.json();
+        setBerita(data);
+      } catch (err) {
+        console.error("Gagal memuat berita:", err);
+        setBerita([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchBerita();
   }, []);
 
   const handleHeroTextTransitionEnd = () => {
@@ -134,7 +170,14 @@ export default function BerandaPage() {
             )}`}
           >
             <div className="md:col-span-5">
-              <div className="bg-gray-300 h-60 md:h-80 w-full rounded"></div>
+              <div className="relative bg-gray-300 h-60 md:h-100 w-full rounded overflow-hidden">
+                <Image
+                  src="/images/home/image1.jpg"
+                  alt="Tentang Desa"
+                  fill
+                  className="object-cover rounded object-[0%_70%]"
+                />
+              </div>
             </div>
 
             <div className="hidden md:block md:col-span-1"></div>
@@ -347,78 +390,68 @@ export default function BerandaPage() {
             Informasi terbaru seputar kegiatan, pengumuman, dan kehidupan warga
             Semandang Hulu.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                date: "02 Juli 2025",
-                title:
-                  "Mahasiswa KKN UAJY Resmi Disambut di Desa Semandang Hulu",
-                header_img:
-                  "https://lldikti5.kemdikbud.go.id/assets/images/posts/medium/tn_lldikti5_20240801150010.jpg",
-                content:
-                  "Sebanyak 9 mahasiswa Universitas Atma Jaya Yogyakarta resmi memulai kegiatan KKN di Desa Semandang Hulu...",
-              },
-              {
-                date: "15 Juli 2025",
-                title: "Gotong Royong Perbaikan Jalan Antar-Dusun Dimulai",
-                header_img:
-                  "https://th.bing.com/th/id/OIP.-1n_lsGSt_gfU1RypVwd1gHaE8?r=0&rs=1&pid=ImgDetMain&cb=idpwebp2&o=7&rm=3",
-                content:
-                  "Warga Desa Semandang Hulu bersama-sama memperbaiki jalan yang menghubungkan dusun-dusun utama...",
-              },
-              {
-                date: "21 Juni 2025",
-                title: "Pelatihan Digitalisasi UMKM di Balai Desa",
-                header_img:
-                  "https://i.pinimg.com/736x/a1/c3/ec/a1c3eca0021357b9094cd282c09a5800.jpg",
-                content:
-                  "Sebanyak 25 pelaku usaha mengikuti pelatihan digitalisasi untuk memasarkan produk lokal secara online...",
-              },
-            ].map((berita, idx) => (
-              <div
-                key={idx}
-                id={`warta-card-${idx}`}
-                data-animate
-                className={`bg-white rounded shadow-md ${getAnimationClass(
-                  `warta-card-${idx}`
-                )}`}
-                style={{ transitionDelay: `${idx * 200}ms` }}
-              >
-                <img
-                  src={berita.header_img}
-                  alt="Tag Price"
-                  className="max-h-60 w-full object-cover"
-                />
-                <div className="p-6">
-                  <p className="text-sm text-gray-500 mb-1 text-[#0a160d]">
-                    {berita.date}
-                  </p>
-                  <h3 className="font-semibold text-lg mb-2 text-[#0a160d]">
-                    {berita.title}
-                  </h3>
-                  <p className="text-sm text-[#0a160d] text-[#0a160d]">
-                    {berita.content}
-                  </p>
-                  <button className="mt-2 text-[#97a202] text-sm font-semibold">
-                    Baca Selengkapnya →
-                  </button>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center">
+            {isLoading ? (
+              <p className="col-span-3 text-center text-gray-600">
+                Memuat berita...
+              </p>
+            ) : berita.length === 0 ? (
+              <p className="col-span-3 text-center text-gray-600">
+                Belum ada berita untuk saat ini.
+              </p>
+            ) : (
+              berita.map((item, idx) => (
+                <div
+                  key={item.id || idx}
+                  id={`warta-card-${idx}`}
+                  data-animate
+                  className={`bg-white rounded shadow-md ${getAnimationClass(
+                    `warta-card-${idx}`
+                  )}`}
+                  style={{ transitionDelay: `${idx * 200}ms` }}
+                >
+                  <img
+                    src={item.header_img || "/placeholder.jpg"}
+                    alt={item.title}
+                    className="max-h-60 w-full object-cover"
+                  />
+                  <div className="p-6">
+                    <p className="text-sm text-gray-500 mb-1 text-[#0a160d]">
+                      {formatTanggal(item.date)}
+                    </p>
+                    <h3 className="font-semibold text-lg mb-2 text-[#0a160d]">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-[#0a160d]">
+                      {item.content?.slice(0, 100)}...
+                    </p>
+                    <Link href={`/warta/${item.id}`}>
+                      <button className="mt-2 text-[#97a202] text-sm font-semibold cursor-pointer hover:underline transition-all duration-800 ease-out">
+                        Baca Selengkapnya →
+                      </button>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
-          <div
-            id="warta-button"
-            data-animate
-            className={`text-center mt-8 ${getAnimationClass("warta-button")}`}
-            style={{ transitionDelay: "400ms" }}
-          >
-            <button className="relative px-6 py-2 border-2 border-[#3F552F] hover:border-[#97A202] text-[#3F552F] rounded overflow-hidden group cursor-pointer">
-              <span className="absolute inset-0 w-0 bg-[#97A202] transition-all duration-300 ease-out group-hover:w-full"></span>
-              <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
-                Lihat Berita Lainnya
-              </span>
-            </button>
-          </div>
+          {berita.length >= 4 && (
+            <div
+              id="warta-button"
+              data-animate
+              className={`text-center mt-8 ${getAnimationClass(
+                "warta-button"
+              )}`}
+              style={{ transitionDelay: "400ms" }}
+            >
+              <button className="relative px-6 py-2 border-2 border-[#3F552F] hover:border-[#97A202] text-[#3F552F] rounded overflow-hidden group cursor-pointer">
+                <span className="absolute inset-0 w-0 bg-[#97A202] transition-all duration-300 ease-out group-hover:w-full"></span>
+                <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
+                  Lihat Berita Lainnya
+                </span>
+              </button>
+            </div>
+          )}
         </section>
 
         {/* Footer */}

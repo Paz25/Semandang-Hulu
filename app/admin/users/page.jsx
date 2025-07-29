@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { SquarePen, Trash2, Plus } from "lucide-react";
-import UserFormSidebar from "@/components/UserFormSidebar";
+import UserFormSidebar from "@/components/Forms/UserFormSidebar";
 
 export default function UserManagementPage() {
   const [users, setUsers] = useState([]);

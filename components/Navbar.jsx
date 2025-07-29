@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { HiOutlineMenu, HiX } from "react-icons/hi";
 
 export default function Navbar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const menuItems = [
     { label: "Beranda", path: "/" },
@@ -15,9 +16,23 @@ export default function Navbar() {
     { label: "Warta Desa", path: "/warta" },
   ];
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/check-auth");
+        const data = await res.json();
+        setIsLoggedIn(data.authenticated);
+      } catch (err) {
+        console.error("Auth check failed", err);
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
   const handleNavClick = (path) => {
-    router.push(path);
-    setIsOpen(false);
+    window.location.href = path;
   };
 
   return (
@@ -59,10 +74,10 @@ export default function Navbar() {
             {/* Tambahan Login Admin */}
             <div
               className="relative group overflow-hidden cursor-pointer flex items-center px-2 h-full"
-              onClick={() => handleNavClick("/login")}
+              onClick={() => handleNavClick(isLoggedIn ? "/admin" : "/login")}
             >
               <span className="relative z-10 transition-colors duration-300 group-hover:text-[#0A160D]">
-                Login Admin
+                {isLoggedIn ? "Dashboard" : "Login Admin"}
               </span>
               <span
                 className="absolute inset-0 bg-white opacity-0 -translate-x-full
@@ -89,7 +104,9 @@ export default function Navbar() {
       {/* Overlay */}
       <div
         className={`fixed inset-0 bg-black z-40 transition-opacity duration-300 ${
-          isOpen ? "opacity-50 pointer-events-auto" : "opacity-0 pointer-events-none"
+          isOpen
+            ? "opacity-50 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setIsOpen(false)}
       ></div>
@@ -114,9 +131,9 @@ export default function Navbar() {
           {/* Tambahan Login Admin di mobile */}
           <p
             className="cursor-pointer hover:text-[#97A202] text-md pt-4 border-t border-white/20"
-            onClick={() => handleNavClick("/login")}
+            onClick={() => handleNavClick(isLoggedIn ? "/admin" : "/login")}
           >
-            Login Admin
+            {isLoggedIn ? "Dashboard" : "Login Admin"}
           </p>
         </div>
       </div>

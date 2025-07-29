@@ -12,7 +12,6 @@ export default function Footer() {
     { label: "Profil Desa", path: "/profil" },
     { label: "Galeri", path: "/galeri" },
     { label: "Warta Desa", path: "/warta" },
-    { label: "Download Area", path: "/download" },
   ];
 
   return (
