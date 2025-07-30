@@ -5,29 +5,11 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const galleryImages = [
-  "/images/galeri/1.jpg",
-  "/images/galeri/2.jpg",
-  "/images/galeri/3.jpg",
-  "/images/galeri/4.jpg",
-  "/images/galeri/5.jpg",
-  "/images/galeri/6.jpg",
-  "/images/galeri/7.jpg",
-  "/images/galeri/8.jpg",
-  "/images/galeri/9.jpg",
-  "/images/galeri/10.jpg",
-  "/images/galeri/11.jpg",
-  "/images/galeri/12.jpg",
-  "/images/galeri/13.jpg",
-  "/images/galeri/14.jpg",
-  "/images/galeri/15.jpg",
-  "/images/galeri/16.jpg",
-];
-
 export default function GaleriDesaPage() {
   const [scrollY, setScrollY] = useState(0);
   const [visibleElements, setVisibleElements] = useState(new Set());
   const observerRef = useRef(null);
+  const [galleryData, setGalleryData] = useState([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,6 +39,22 @@ export default function GaleriDesaPage() {
   }, []);
 
   const isVisible = (id) => visibleElements.has(id);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const res = await fetch("/api/gallery");
+        const data = await res.json();
+        console.log("Gallery data:", data); // 👈 tambahkan ini
+
+        setGalleryData(data);
+      } catch (err) {
+        console.error("Gagal memuat galeri:", err);
+      }
+    };
+
+    fetchGallery();
+  }, []);
 
   return (
     <div>
@@ -108,23 +106,16 @@ export default function GaleriDesaPage() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {galleryImages.map((src, idx) => (
+            {galleryData.map((item, idx) => (
               <div
-                key={idx}
+                key={item.id}
                 id={`galeri-img-${idx}`}
-                data-animate
-                className={`relative w-full h-64 rounded-xs overflow-hidden shadow-md transform transition-all duration-700 ease-out hover:scale-105 cursor-pointer ${
-                  isVisible(`galeri-img-${idx}`)
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-8"
-                }`}
-                style={{ transitionDelay: `${idx * 100}ms` }}
+                className="relative rounded-xs flex justify-center align-center overflow-hidden transform transition-all duration-700 ease-out hover:scale-105 cursor-pointer opacity-100 translate-y-0"
               >
-                <Image
-                  src={src}
-                  alt={`Galeri ${idx + 1}`}
-                  fill
-                  className="object-cover"
+                <img
+                  src={item.imageurl}
+                  alt={item.title}
+                  className="w-full aspect-square object-cover rounded-lg shadow-lg"
                 />
               </div>
             ))}

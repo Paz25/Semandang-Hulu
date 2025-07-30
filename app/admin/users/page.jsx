@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { SquarePen, Trash2, Plus } from "lucide-react";
 import UserFormSidebar from "@/components/Forms/UserFormSidebar";
+import toast from "react-hot-toast";
 
 export default function UserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -21,6 +22,7 @@ export default function UserManagementPage() {
       setUsers(data);
     } catch (err) {
       console.error("Error fetching users:", err);
+      toast.error("Gagal memuat pengguna.");
     }
   };
 
@@ -35,9 +37,22 @@ export default function UserManagementPage() {
   };
 
   const handleDeleteUser = async (id) => {
-    if (confirm("Yakin ingin menghapus pengguna ini?")) {
-      await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+    if (users.length <= 1) {
+      toast.error("Minimal harus ada satu pengguna yang tersisa.");
+      return;
+    }
+
+    const confirmDelete = window.confirm("Yakin ingin menghapus pengguna ini?");
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Gagal menghapus pengguna");
+      toast.success("Pengguna berhasil dihapus.");
       fetchUsers();
+    } catch (err) {
+      console.error("Gagal menghapus pengguna:", err);
+      toast.error("Terjadi kesalahan saat menghapus pengguna.");
     }
   };
 
@@ -70,7 +85,7 @@ export default function UserManagementPage() {
           </thead>
           <tbody className="text-black">
             {users.map((user) => (
-              <tr key={user.id} className="">
+              <tr key={user.id}>
                 <td className="p-3">{user.name}</td>
                 <td className="p-3">{user.email}</td>
                 <td className="p-3 flex gap-3">

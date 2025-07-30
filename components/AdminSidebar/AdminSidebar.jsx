@@ -4,13 +4,14 @@ import "./AdminSidebar.css";
 import LogoutButton from "@/components/AdminSidebar/LogoutButton";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Newspaper, UsersRound, Menu } from "lucide-react";
+import { LayoutDashboard, Newspaper, UsersRound, Menu, Images } from "lucide-react";
 import { useState } from "react";
 
 const menuItems = [
   { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
   { name: "Warta", path: "/admin/warta", icon: Newspaper },
   { name: "Pengguna", path: "/admin/users", icon: UsersRound },
+  { name: "Galeri", path: "/admin/gallery", icon: Images },
 ];
 
 export default function AdminSidebar() {

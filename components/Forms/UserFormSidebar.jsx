@@ -2,8 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import toast from "react-hot-toast";
 
-export default function UserFormSidebar({ isOpen, onClose, user, refreshUsers }) {
+export default function UserFormSidebar({
+  isOpen,
+  onClose,
+  user,
+  refreshUsers,
+}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,29 +31,48 @@ export default function UserFormSidebar({ isOpen, onClose, user, refreshUsers })
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Password dan konfirmasi password tidak sama.");
+      toast.error("Password dan konfirmasi password tidak sama.");
       return;
     }
 
     const payload = { name, email };
     if (password) payload.password = password;
 
-    if (user) {
-      await fetch(`/api/admin/users/${user.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    } else {
-      await fetch("/api/admin/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    }
+    try {
+      let response;
+      if (user) {
+        response = await fetch(`/api/admin/users/${user.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        response = await fetch("/api/admin/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
 
-    refreshUsers();
-    onClose();
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.error(
+          errorData.message || "Terjadi kesalahan saat menyimpan data."
+        );
+        return;
+      }
+
+      toast.success(
+        user
+          ? "Data pengguna berhasil diperbarui!"
+          : "Pengguna baru berhasil ditambahkan!"
+      );
+      refreshUsers();
+      onClose();
+    } catch (error) {
+      toast.error("Gagal terhubung ke server. Coba lagi nanti.");
+      console.error(error);
+    }
   };
 
   return (
@@ -58,7 +83,9 @@ export default function UserFormSidebar({ isOpen, onClose, user, refreshUsers })
       onClick={(e) => e.stopPropagation()}
     >
       <div className="flex justify-between items-center px-4 py-3 border-b">
-        <h2 className="text-lg font-semibold">{user ? "Edit Pengguna" : "Tambah Pengguna"}</h2>
+        <h2 className="text-lg font-semibold">
+          {user ? "Edit Pengguna" : "Tambah Pengguna"}
+        </h2>
         <button onClick={onClose}>
           <X size={24} />
         </button>
@@ -99,7 +126,9 @@ export default function UserFormSidebar({ isOpen, onClose, user, refreshUsers })
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Konfirmasi Password</label>
+          <label className="block text-sm font-medium mb-1">
+            Konfirmasi Password
+          </label>
           <input
             type="password"
             value={confirmPassword}

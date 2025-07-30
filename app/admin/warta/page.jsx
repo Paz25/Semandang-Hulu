@@ -35,9 +35,14 @@ export default function WartaManagementPage() {
       const res = await fetch("/api/admin/news", {
         credentials: "include",
       });
-      const data = await res.json();
 
-      console.log("Fetched berita:", data);
+      if (!res.ok) {
+        const errText = await res.text(); // baca sebagai teks jika bukan JSON
+        console.error("Gagal ambil berita, response tidak OK:", errText);
+        throw new Error("Gagal mengambil data berita");
+      }
+
+      const data = await res.json();
 
       if (Array.isArray(data)) {
         setBeritaList(data);
@@ -46,7 +51,8 @@ export default function WartaManagementPage() {
       }
     } catch (err) {
       console.error("Gagal fetch berita:", err);
-      setBeritaList([]);
+      setBeritaList([]); // hindari infinite loading
+      toast.error("Terjadi kesalahan saat mengambil berita");
     } finally {
       setIsLoading(false);
     }

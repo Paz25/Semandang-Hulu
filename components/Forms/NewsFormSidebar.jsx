@@ -1,165 +1,217 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { SquarePen, Trash2, Plus } from "lucide-react";
+import NewsFormSidebar from "@/components/Forms/NewsFormSidebar";
+import toast from "react-hot-toast";
+import ModalKonfirmasi from "@/components/Forms/ModalKonfirmasi";
+import Link from "next/link";
 
-export default function NewsFormSidebar({
-  isOpen,
-  onClose,
-  onSubmit,
-  selectedNews,
-}) {
-  const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    date: "",
-    header_img: "",
-  });
+export default function WartaManagementPage() {
+  function formatTanggal(dateString) {
+    const options = {
+      weekday: "long",
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    };
+
+    return new Date(dateString).toLocaleDateString("id-ID", options);
+  }
+
+  const [beritaList, setBeritaList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedNews, setSelectedNews] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBeritaId, setSelectedBeritaId] = useState(null);
 
   useEffect(() => {
-    if (selectedNews) {
-      const formattedDate = selectedNews.created_at
-        ? new Date(selectedNews.created_at).toISOString().split("T")[0]
-        : "";
+    fetchBeritaList();
+  }, []);
 
-      setFormData({
-        title: selectedNews.title || "",
-        content: selectedNews.content || "",
-        date: formattedDate,
-        header_img: selectedNews.header_img || "",
-      });
-    } else {
-      setFormData({
-        title: "",
-        content: "",
-        date: "",
-        header_img: "",
-      });
-    }
-  }, [selectedNews, isOpen]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleImageUpload = async (file) => {
-    const formDataImage = new FormData();
-    formDataImage.append("file", file);
-
+  const fetchBeritaList = async () => {
     try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formDataImage,
+      const res = await fetch("/api/admin/news", {
+        credentials: "include",
       });
-
       const data = await res.json();
 
-      if (data.url) {
-        setFormData((prev) => ({
-          ...prev,
-          header_img: data.url,
-        }));
+      console.log("Fetched berita:", data);
+
+      if (Array.isArray(data)) {
+        setBeritaList(data);
       } else {
-        toast.error("Gagal mengunggah gambar");
+        throw new Error("Data berita tidak berbentuk array");
       }
-    } catch (error) {
-      console.error("Upload error:", error);
-      toast.error("Terjadi kesalahan saat upload gambar");
+    } catch (err) {
+      console.error("Gagal fetch berita:", err);
+      setBeritaList([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    onSubmit(formData);
+  const handleAddNews = () => {
+    setSelectedNews(null);
+    setIsSidebarOpen(true);
+  };
+
+  const handleEditNews = (berita) => {
+    setSelectedNews(berita);
+    setIsSidebarOpen(true);
+  };
+
+  const handleSubmit = async (formData) => {
+    try {
+      const res = await fetch(
+        selectedNews ? `/api/admin/news/${selectedNews.id}` : "/api/admin/news",
+        {
+          method: selectedNews ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Gagal menyimpan berita");
+      }
+
+      toast.success(result.message);
+      setIsSidebarOpen(false);
+      fetchBeritaList();
+    } catch (err) {
+      console.error("Submit error:", err);
+      toast.error(err.message);
+    }
+  };
+
+  const handleDeleteClick = (id) => {
+    setSelectedBeritaId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedBeritaId) return;
+
+    try {
+      const res = await fetch(`/api/admin/news/${selectedBeritaId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        toast.error(errData.message || "Gagal menghapus berita");
+        return;
+      }
+
+      toast.success("Berita berhasil dihapus");
+      fetchBeritaList();
+    } catch (err) {
+      console.error("Error delete berita:", err);
+      toast.error("Terjadi kesalahan saat menghapus berita");
+    } finally {
+      setIsModalOpen(false);
+      setSelectedBeritaId(null);
+    }
+  };
+
+  const handleCloseSidebar = () => {
+    setIsSidebarOpen(false);
   };
 
   return (
-    <div
-      className={`fixed inset-0 md:inset-y-0 md:right-0 md:left-auto text-black h-full w-full md:w-[700] bg-white z-50 shadow-lg transform transition-transform duration-300 ${
-        isOpen ? "translate-x-0" : "translate-x-full"
-      } overflow-hidden`}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="flex justify-between items-center px-4 py-3 border-b">
-        <h2 className="text-lg font-semibold">
-          {selectedNews ? "Edit Berita" : "Tambah Berita"}
-        </h2>
-        <button onClick={onClose}>
-          <X size={24} />
-        </button>
-      </div>
+    <div className="relative min-h-screen bg-white p-8">
+      <h1 className="text-2xl font-bold mb-6 text-[#3F552F]">
+        Manajemen Warta
+      </h1>
 
-      <div className="h-[calc(100%-56px)] overflow-auto p-4">
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Judul</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
-            />
-          </div>
+      <button
+        onClick={handleAddNews}
+        className="flex items-center gap-2 mb-6 bg-[#3F552F] text-white px-4 py-2 rounded hover:bg-[#97A202] transition"
+      >
+        <Plus size={18} />
+        Tambah Berita
+      </button>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Tanggal</label>
-              <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Gambar Header
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e.target.files[0])}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
-              />
-              {formData.header_img && (
-                <img
-                  src={formData.header_img}
-                  alt="Preview"
-                  className="mt-2 w-full h-40 object-cover rounded"
-                />
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Konten</label>
-            <textarea
-              id="content"
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              className="w-full border rounded p-2 min-h-[150px] resize-y"
-              placeholder="Isi konten berita..."
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-[#3F552F] hover:bg-[#97A202] text-white font-semibold py-2 rounded-md transition-all duration-300"
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {beritaList.map((berita, idx) => (
+          <div
+            key={idx}
+            id={berita.id}
+            data-animate
+            className="bg-white rounded shadow-md"
+            style={{ transitionDelay: `${idx * 200}ms` }}
           >
-            {selectedNews ? "Simpan Perubahan" : "Tambah Berita"}
-          </button>
-        </form>
+            {berita.header_img ? (
+              <img
+                src={berita.header_img}
+                alt={berita.title}
+                className="max-h-50 w-full object-cover"
+              />
+            ) : (
+              <div className="min-h-50 w-full flex items-center justify-center text-gray-400 text-sm bg-gray-100">
+                Tidak ada gambar
+              </div>
+            )}
+            <div className="p-6">
+              <p className="text-sm text-gray-500 mb-1 text-[#0a160d]">
+                {formatTanggal(berita.date)}
+              </p>
+              <h3 className="font-semibold text-md mb-2 text-[#0a160d]">
+                {berita.title}
+              </h3>
+              <p className="text-sm text-[#0a160d] line-clamp-3">
+                {berita.content}
+              </p>
+              <Link href={`/warta/${berita.id}`}>
+                <button className="mt-2 text-[#97a202] text-sm font-semibold cursor-pointer hover:underline transition-all duration-800 ease-out">
+                  Baca Selengkapnya →
+                </button>
+              </Link>
+              <div className="flex justify-between items-center mt-4">
+                <button
+                  onClick={() => handleEditNews(berita)}
+                  className="text-sm text-blue-500"
+                >
+                  ✎ Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteClick(berita.id)}
+                  className="text-sm text-red-500"
+                >
+                  🗑 Hapus
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
+
+      <ModalKonfirmasi
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Apakah Anda yakin ingin menghapus berita ini?"
+      />
+
+      <NewsFormSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onSubmit={handleSubmit}
+        selectedNews={selectedNews}
+      />
+
+      {/* Overlay */}
+      {isSidebarOpen && (
+        <div
+          onClick={handleCloseSidebar}
+          className="fixed inset-0 bg-black/20 z-40"
+        />
+      )}
     </div>
   );
 }
