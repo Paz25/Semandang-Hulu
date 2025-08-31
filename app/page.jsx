@@ -10,6 +10,7 @@ import HighlightCard from "@/components/HighlightCard";
 import Navbar from "@/components/Navbar";
 import PetaDesaSection from "@/components/PetaDesaSection";
 import Footer from "@/components/Footer";
+import NewsCard from "@/components/NewsCard";
 
 export default function BerandaPage() {
   const [scrollY, setScrollY] = useState(0);
@@ -21,17 +22,6 @@ export default function BerandaPage() {
 
   const [berita, setBerita] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  function formatTanggal(dateString) {
-    const options = {
-      weekday: "long",
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    };
-
-    return new Date(dateString).toLocaleDateString("id-ID", options);
-  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -390,7 +380,8 @@ export default function BerandaPage() {
             Informasi terbaru seputar kegiatan, pengumuman, dan kehidupan warga
             Semandang Hulu.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
             {isLoading ? (
               <p className="col-span-3 text-center text-gray-600">
                 Memuat berita...
@@ -400,42 +391,23 @@ export default function BerandaPage() {
                 Belum ada berita untuk saat ini.
               </p>
             ) : (
-              berita.map((item, idx) => (
-                <div
-                  key={item.id || idx}
-                  id={`warta-card-${idx}`}
-                  data-animate
-                  className={`bg-white rounded shadow-md ${getAnimationClass(
-                    `warta-card-${idx}`
-                  )}`}
-                  style={{ transitionDelay: `${idx * 200}ms` }}
-                >
-                  <img
-                    src={item.header_img || "/placeholder.jpg"}
-                    alt={item.title}
-                    className="max-h-60 w-full object-cover"
+              berita
+                .slice(0, 3)
+                .map((item) => (
+                  <NewsCard
+                    key={item.id}
+                    id={item.id}
+                    title={item.title}
+                    content={item.content}
+                    date={item.date}
+                    header_img={item.header_img}
                   />
-                  <div className="p-6">
-                    <p className="text-sm text-gray-500 mb-1 text-[#0a160d]">
-                      {formatTanggal(item.date)}
-                    </p>
-                    <h3 className="font-semibold text-lg mb-2 text-[#0a160d]">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-[#0a160d]">
-                      {item.content?.slice(0, 100)}...
-                    </p>
-                    <Link href={`/warta/${item.id}`}>
-                      <button className="mt-2 text-[#97a202] text-sm font-semibold cursor-pointer hover:underline transition-all duration-800 ease-out">
-                        Baca Selengkapnya →
-                      </button>
-                    </Link>
-                  </div>
-                </div>
-              ))
+                ))
             )}
           </div>
-          {berita.length >= 4 && (
+
+          {/* Tombol lihat berita lain jika lebih dari 3 */}
+          {berita.length > 3 && (
             <div
               id="warta-button"
               data-animate
@@ -444,12 +416,14 @@ export default function BerandaPage() {
               )}`}
               style={{ transitionDelay: "400ms" }}
             >
-              <button className="relative px-6 py-2 border-2 border-[#3F552F] hover:border-[#97A202] text-[#3F552F] rounded overflow-hidden group cursor-pointer">
-                <span className="absolute inset-0 w-0 bg-[#97A202] transition-all duration-300 ease-out group-hover:w-full"></span>
-                <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
-                  Lihat Berita Lainnya
-                </span>
-              </button>
+              <Link href="/warta">
+                <button className="relative px-6 py-2 border-2 border-[#3F552F] hover:border-[#97A202] text-[#3F552F] rounded overflow-hidden group cursor-pointer">
+                  <span className="absolute inset-0 w-0 bg-[#97A202] transition-all duration-300 ease-out group-hover:w-full"></span>
+                  <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
+                    Lihat Berita Lainnya
+                  </span>
+                </button>
+              </Link>
             </div>
           )}
         </section>

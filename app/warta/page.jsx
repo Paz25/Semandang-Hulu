@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Link from "next/link";
+import NewsCard from "@/components/NewsCard";
 
 export default function WartaDesaPage() {
   const [scrollY, setScrollY] = useState(0);
@@ -42,6 +42,7 @@ export default function WartaDesaPage() {
       try {
         const res = await fetch("/api/news");
         const data = await res.json();
+        console.log("DATA NEWS:", data);
         setNewsData(data);
       } catch (err) {
         console.error("Gagal memuat berita:", err);
@@ -105,44 +106,18 @@ export default function WartaDesaPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
               {newsData.map((item, idx) => (
-                <div
+                <NewsCard
                   key={item.id}
-                  id={`news-${idx}`}
-                  data-animate
-                  className={`bg-white border rounded-xl overflow-hidden shadow-md transform transition-all duration-700 ease-out cursor-pointer hover:scale-[1.02] ${
-                    isVisible(`news-${idx}`)
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-12"
-                  }`}
-                  style={{ transitionDelay: `${idx * 100}ms` }}
-                >
-                  <Image
-                    src={item.imageurl}
-                    alt={item.title}
-                    width={600}
-                    height={400}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-[#0a160d] mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-gray-700 text-sm line-clamp-3">
-                      {item.excerpt}
-                    </p>
-                    <Link
-                      href={`/warta/${item.id}`}
-                      className="text-[#97A202] mt-3 inline-block text-sm font-semibold hover:underline"
-                    >
-                      Baca selengkapnya →
-                    </Link>
-                  </div>
-                </div>
+                  id={item.id}
+                  title={item.title}
+                  content={item.content}
+                  date={item.date}
+                  header_img={item.header_img}
+                />
               ))}
             </div>
           )}
         </section>
-
         <Footer />
       </main>
     </div>
