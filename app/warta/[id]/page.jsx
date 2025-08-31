@@ -31,13 +31,14 @@ export default async function DetailBerita({ params }) {
           })}
         </p>
         {berita.header_img && (
-          <Image
-            src={berita.header_img}
-            alt={berita.title}
-            width={800}
-            height={400}
-            className="rounded-lg mb-6 object-cover"
-          />
+          <div className="relative w-full aspect-[16/9] mb-5">
+            <Image
+              src={berita.header_img}
+              alt={berita.title}
+              fill
+              className="rounded-lg mb-6 object-cover"
+            />
+          </div>
         )}
         <div className="text-[#0a160d] leading-relaxed whitespace-pre-line text-justify">
           {berita.content}

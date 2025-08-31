@@ -13,12 +13,16 @@ export async function DELETE(request) {
   }
 
   try {
-    // Ambil data gambar dulu dari DB
-    const { rows } = await db.query("SELECT * FROM gallery WHERE id = $1", [id]);
+    const { rows } = await db.query("SELECT * FROM gallery WHERE id = $1", [
+      id,
+    ]);
     const result = rows[0];
 
     if (!result) {
-      return NextResponse.json({ message: "Data tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Data tidak ditemukan" },
+        { status: 404 }
+      );
     }
 
     const imagePath = path.join(process.cwd(), "public", result.imageurl);
@@ -26,12 +30,14 @@ export async function DELETE(request) {
       console.warn("Gagal menghapus file:", imagePath, err.message);
     });
 
-    // Hapus dari database
     await db.query("DELETE FROM gallery WHERE id = $1", [id]);
 
     return NextResponse.json({ message: "Berhasil dihapus" }, { status: 200 });
   } catch (err) {
     console.error("DELETE /gallery error:", err);
-    return NextResponse.json({ message: "Gagal menghapus data" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Gagal menghapus data" },
+      { status: 500 }
+    );
   }
 }

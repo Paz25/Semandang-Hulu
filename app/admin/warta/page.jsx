@@ -39,28 +39,29 @@ export default function WartaManagementPage() {
     }
   };
 
-  const handleSubmit = async (formData, id) => {
-    const method = id ? "PUT" : "POST";
-    const url = id ? `/api/news?id=${id}` : "/api/news";
-
-    await fetch(url, { method, body: formData });
-    fetchNews();
-  };
-
   const handleAddBerita = () => {
     setSelectedNews(null);
     setIsSidebarOpen(true);
   };
 
-  const handleEditBerita = (berita) => {
-    setSelectedNews(berita);
-    setIsSidebarOpen(true);
-  };
-
-  const handleDeleteBerita = (id) => {
+  const handleDeleteBerita = async (id) => {
     if (confirm("Yakin ingin menghapus berita ini?")) {
-      setBeritaList(beritaList.filter((item) => item.id !== id));
-      // TODO: panggil API DELETE ke /api/news/:id
+      try {
+        const res = await fetch(`/api/admin/news/${id}`, {
+          method: "DELETE",
+          credentials: "include", // kalau butuh cookie untuk verifyTokenFromCookie
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+
+        // update state kalau berhasil
+        setBeritaList((prev) => prev.filter((item) => item.id !== id));
+        alert(data.message);
+      } catch (err) {
+        console.error("Gagal hapus:", err);
+        alert(err.message);
+      }
     }
   };
 

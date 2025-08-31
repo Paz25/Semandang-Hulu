@@ -16,7 +16,7 @@ export default function NewsCard({ id, title, content, date, header_img }) {
   }
 
   return (
-    <div className="w-100 bg-white border rounded-xl overflow-hidden shadow-md transform transition-all duration-700 ease-out cursor-pointer hover:scale-[1.02]">
+    <div className="w-full bg-white border rounded-xl overflow-hidden shadow-md transform transition-all duration-700 ease-out cursor-pointer hover:scale-[1.02]">
       <Image
         src={header_img || "/images/news/no-image.jpg"}
         alt={title}
