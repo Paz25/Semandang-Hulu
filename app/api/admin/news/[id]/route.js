@@ -1,7 +1,9 @@
+import { writeFile, mkdir, unlink } from "fs/promises";
+import { existsSync } from "fs";
+import path from "path";
 import db from "@/lib/db";
 import { verifyTokenFromCookie } from "@/lib/auth";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { NextResponse } from "next/server";
 
 export async function PUT(req, { params }) {
   try {
@@ -26,25 +28,41 @@ export async function PUT(req, { params }) {
     let shouldUpdateImage = false;
     let imageUrl = null;
 
-    if (headerImgField) {
-      if (typeof headerImgField === "string") {
-        const s = headerImgField.toString().trim();
-        if (s !== "") {
-          shouldUpdateImage = true;
-          imageUrl = s;
-        }
-      } else {
-        const bytes = await headerImgField.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        const filename = `${Date.now()}-${headerImgField.name.replace(
-          /\s/g,
-          "_"
-        )}`;
-        const filepath = path.join(process.cwd(), "public/uploads", filename);
-        await writeFile(filepath, buffer);
-        imageUrl = `/uploads/${filename}`;
-        shouldUpdateImage = true;
+    if (headerImgField && typeof headerImgField !== "string") {
+      // Ambil gambar lama dari DB
+      const oldRes = await db.query(
+        "SELECT header_img FROM news WHERE id = $1",
+        [id]
+      );
+      if (oldRes.rowCount > 0 && oldRes.rows[0].header_img) {
+        const oldPath = path.join(
+          process.cwd(),
+          "public",
+          oldRes.rows[0].header_img
+        );
+        await unlink(oldPath).catch((err) => {
+          console.warn("Gagal menghapus file lama:", oldPath, err.message);
+        });
       }
+
+      // Pastikan folder uploads/news ada
+      const uploadDir = path.join(process.cwd(), "public/uploads/news");
+      if (!existsSync(uploadDir)) {
+        await mkdir(uploadDir, { recursive: true });
+      }
+
+      // Simpan gambar baru
+      const bytes = await headerImgField.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const filename = `${Date.now()}-${headerImgField.name.replace(
+        /\s/g,
+        "_"
+      )}`;
+      const filepath = path.join(uploadDir, filename);
+      await writeFile(filepath, buffer);
+
+      imageUrl = `/uploads/news/${filename}`;
+      shouldUpdateImage = true;
     }
 
     const setClauses = [];
@@ -63,12 +81,6 @@ export async function PUT(req, { params }) {
     if (shouldUpdateImage) {
       setClauses.push(`header_img = $${idx++}`);
       paramsArr.push(imageUrl);
-    }
-
-    if (setClauses.length === 0) {
-      return new Response(JSON.stringify({ message: "Tidak ada perubahan." }), {
-        status: 400,
-      });
     }
 
     const query = `UPDATE news SET ${setClauses.join(", ")} WHERE id = $${idx}`;
@@ -104,16 +116,30 @@ export async function DELETE(req, { params }) {
       });
     }
 
-    const result = await db.query("DELETE FROM news WHERE id = $1", [id]);
+    const resSelect = await db.query(
+      "SELECT header_img FROM news WHERE id = $1",
+      [id]
+    );
 
-    if (result.rowCount === 0) {
+    if (resSelect.rowCount === 0) {
       return new Response(
         JSON.stringify({ message: "Berita tidak ditemukan" }),
         { status: 404 }
       );
     }
 
-    return Response.json({ message: "Berita berhasil dihapus" });
+    const headerImg = resSelect.rows[0].header_img;
+
+    if (headerImg) {
+      const filePath = path.join(process.cwd(), "public", headerImg);
+      await unlink(filePath).catch((err) => {
+        console.warn("Gagal menghapus file:", filePath, err.message);
+      });
+    }
+
+    await db.query("DELETE FROM news WHERE id = $1", [id]);
+
+    return NextResponse.json({ message: "Berhasil dihapus" }, { status: 200 });
   } catch (err) {
     console.error("DELETE /api/admin/news/[id] error:", err);
     return new Response(

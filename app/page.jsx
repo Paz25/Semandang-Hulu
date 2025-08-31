@@ -381,7 +381,7 @@ export default function BerandaPage() {
             Semandang Hulu.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-center">
             {isLoading ? (
               <p className="col-span-3 text-center text-gray-600">
                 Memuat berita...

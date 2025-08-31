@@ -1,6 +1,7 @@
 import db from "@/lib/db";
 import { verifyTokenFromCookie } from "@/lib/auth";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
+import { existsSync } from "fs";
 import path from "path";
 
 export async function GET(req) {
@@ -37,15 +38,20 @@ export async function POST(req) {
       );
     }
 
-    // Simpan file
+    // Pastikan folder uploads/news ada
+    const uploadDir = path.join(process.cwd(), "public/uploads/news");
+    if (!existsSync(uploadDir)) {
+      await mkdir(uploadDir, { recursive: true });
+    }
+
     const bytes = await header_img.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
     const filename = `${Date.now()}-${header_img.name.replace(/\s/g, "_")}`;
-    const filepath = path.join(process.cwd(), "public/uploads", filename);
+    const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);
 
-    const imageUrl = `/uploads/${filename}`;
+    const imageUrl = `/uploads/news/${filename}`;
 
     // Simpan ke DB
     await db.query(
