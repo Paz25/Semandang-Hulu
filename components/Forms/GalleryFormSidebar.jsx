@@ -29,7 +29,7 @@ export default function GalleryFormSidebar({
     setLoading(true);
     const formData = new FormData();
     formData.append("title", title);
-    formData.append("image", imageFile); // ✅ penting: name harus "image"
+    formData.append("image", imageFile);
 
     try {
       const res = await fetch("/api/admin/gallery", {
@@ -47,7 +47,7 @@ export default function GalleryFormSidebar({
       refreshGalleries();
       onClose();
     } catch (err) {
-      toast.error("Gagal terhubung ke server.");
+      toast.error("Gagal terhubung ke server. Coba lagi nanti.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -75,20 +75,22 @@ export default function GalleryFormSidebar({
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            required
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
+            required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Unggah Gambar</label>
+          <label className="block text-sm font-medium mb-1">
+            Unggah Gambar
+          </label>
           <input
             type="file"
             accept="image/*"
-            name="image" // ✅ wajib untuk dikenali di server
+            name="image"
             onChange={(e) => setImageFile(e.target.files[0])}
-            required
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202] file:mr-2 file:py-1 file:px-3 file:border-0 file:bg-[#3F552F] file:text-white file:rounded file:cursor-pointer"
+            required
           />
         </div>
 

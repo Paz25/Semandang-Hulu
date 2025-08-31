@@ -1,6 +1,6 @@
 import db from "@/lib/db";
-import { verifyTokenFromCookie } from "@/lib/auth";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
+import { existsSync } from "fs";
 import path from "path";
 
 export async function GET() {
@@ -34,11 +34,17 @@ export async function POST(req) {
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
+    // pastikan folder uploads/gallery ada
+    const uploadDir = path.join(process.cwd(), "public/uploads/gallery");
+    if (!existsSync(uploadDir)) {
+      await mkdir(uploadDir, { recursive: true });
+    }
+
     const filename = `${Date.now()}-${image.name.replace(/\s/g, "_")}`;
-    const filepath = path.join(process.cwd(), "public/uploads", filename);
+    const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);
 
-    const imageUrl = `/uploads/${filename}`;
+    const imageUrl = `/uploads/gallery/${filename}`;
 
     // Simpan ke database (pakai db.query)
     await db.query("INSERT INTO gallery (title, imageUrl) VALUES ($1, $2)", [

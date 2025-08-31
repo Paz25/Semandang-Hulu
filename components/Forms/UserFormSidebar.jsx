@@ -67,7 +67,8 @@ export default function UserFormSidebar({
           ? "Data pengguna berhasil diperbarui!"
           : "Pengguna baru berhasil ditambahkan!"
       );
-      refreshUsers();
+
+      refreshUsers?.();
       onClose();
     } catch (error) {
       toast.error("Gagal terhubung ke server. Coba lagi nanti.");
@@ -98,8 +99,8 @@ export default function UserFormSidebar({
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
+            required
           />
         </div>
 
@@ -109,8 +110,8 @@ export default function UserFormSidebar({
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#97A202]"
+            required
           />
         </div>
 

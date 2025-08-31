@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { SquarePen, Trash2, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import NewsFormSidebar from "@/components/Forms/NewsFormSidebar";
+import Image from "next/image";
+import { Plus } from "lucide-react";
 
 export default function WartaManagementPage() {
   function formatTanggal(dateString) {
@@ -11,52 +13,55 @@ export default function WartaManagementPage() {
       month: "long",
       year: "numeric",
     };
-
     return new Date(dateString).toLocaleDateString("id-ID", options);
   }
 
-  const [beritaList, setBeritaList] = useState([
-    {
-      date: "2025-07-02T13:45:00Z",
-      title: "Mahasiswa KKN UAJY Resmi Disambut di Desa Semandang Hulu",
-      header_img:
-        "https://lldikti5.kemdikbud.go.id/assets/images/posts/medium/tn_lldikti5_20240801150010.jpg",
-      content:
-        "Sebanyak 9 mahasiswa Universitas Atma Jaya Yogyakarta resmi memulai kegiatan KKN di Desa Semandang Hulu...",
-    },
-    {
-      date: "2025-07-15T13:45:00Z",
-      title: "Gotong Royong Perbaikan Jalan Antar-Dusun Dimulai",
-      header_img:
-        "https://th.bing.com/th/id/OIP.-1n_lsGSt_gfU1RypVwd1gHaE8?r=0&rs=1&pid=ImgDetMain&cb=idpwebp2&o=7&rm=3",
-      content:
-        "Warga Desa Semandang Hulu bersama-sama memperbaiki jalan yang menghubungkan dusun-dusun utama...",
-    },
-    {
-      date: "2025-07-21T13:45:00Z",
-      title: "Pelatihan Digitalisasi UMKM di Balai Desa",
-      header_img:
-        "https://i.pinimg.com/736x/a1/c3/ec/a1c3eca0021357b9094cd282c09a5800.jpg",
-      content:
-        "Sebanyak 25 pelaku usaha mengikuti pelatihan digitalisasi untuk memasarkan produk lokal secara online...",
-    },
-  ]);
+  const [beritaList, setBeritaList] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedBerita, setSelectedBerita] = useState(null);
+  const [selectedNews, setSelectedNews] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchBerita();
+  }, []);
+
+  const fetchBerita = async () => {
+    try {
+      const response = await fetch("/api/admin/news");
+      if (!response.ok) throw new Error("Gagal mengambil data berita");
+      const data = await response.json();
+      setBeritaList(data);
+    } catch (err) {
+      console.error("Error fetch berita:", err);
+      setBeritaList([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleAddBerita = () => {
-    setSelectedBerita(null);
+    setSelectedNews(null);
     setIsSidebarOpen(true);
   };
 
-  const handleEditBerita = (berita) => {
-    setSelectedBerita(berita);
-    setIsSidebarOpen(true);
-  };
-
-  const handleDeleteBerita = (id) => {
+  const handleDeleteBerita = async (id) => {
     if (confirm("Yakin ingin menghapus berita ini?")) {
-      setBeritaList(beritaList.filter((item) => item.id !== id));
+      try {
+        const res = await fetch(`/api/admin/news/${id}`, {
+          method: "DELETE",
+          credentials: "include", // kalau butuh cookie untuk verifyTokenFromCookie
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+
+        // update state kalau berhasil
+        setBeritaList((prev) => prev.filter((item) => item.id !== id));
+        alert(data.message);
+      } catch (err) {
+        console.error("Gagal hapus:", err);
+        alert(err.message);
+      }
     }
   };
 
@@ -78,37 +83,60 @@ export default function WartaManagementPage() {
         Tambah Berita
       </button>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {beritaList.map((berita, idx) => (
-          <div
-            key={idx}
-            id={`warta-card-${idx}`}
-            data-animate
-            className="bg-white rounded shadow-md"
-            style={{ transitionDelay: `${idx * 200}ms` }}
-          >
-            <img
-              src={berita.header_img}
-              alt={berita.title}
-              className="max-h-50 w-full object-cover"
-            />
-            <div className="p-6">
-              <p className="text-sm text-gray-500 mb-1 text-[#0a160d]">
-                {formatTanggal(berita.date)}
-              </p>
-              <h3 className="font-semibold text-md mb-2 text-[#0a160d]">
-                {berita.title}
-              </h3>
-              <p className="text-sm text-[#0a160d] line-clamp-3">
-                {berita.content}
-              </p>
-              <button className="mt-2 text-[#97a202] text-sm font-semibold">
-                Baca Selengkapnya →
-              </button>
+      {/* Loading / Empty State */}
+      {isLoading ? (
+        <p className="text-gray-600">Memuat berita...</p>
+      ) : beritaList.length === 0 ? (
+        <p className="text-gray-600">Belum ada berita.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {beritaList.map((berita, idx) => (
+            <div
+              key={berita.id || idx}
+              id={`warta-card-${idx}`}
+              data-animate
+              className="bg-white rounded shadow-md"
+              style={{ transitionDelay: `${idx * 200}ms` }}
+            >
+              <Image
+                src={berita.header_img || "/images/news/no-image.jpg"}
+                alt={berita.title}
+                width={600}
+                height={400}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-6">
+                <p className="text-sm text-gray-500 mb-1 text-[#0a160d]">
+                  {formatTanggal(berita.date)}
+                </p>
+                <h3 className="font-semibold text-md mb-2 text-[#0a160d]">
+                  {berita.title}
+                </h3>
+                <p className="text-sm text-[#0a160d] line-clamp-3">
+                  {berita.content}
+                </p>
+                <div className="flex justify-between mt-3">
+                  <button
+                    onClick={() => {
+                      setSelectedNews(berita);
+                      setIsSidebarOpen(true);
+                    }}
+                    className="text-[#97a202] text-sm font-semibold hover:underline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteBerita(berita.id)}
+                    className="text-red-500 text-sm font-semibold hover:underline"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Overlay */}
       {isSidebarOpen && (
@@ -118,20 +146,13 @@ export default function WartaManagementPage() {
         />
       )}
 
-      {/* Sidebar (dummy) */}
       {isSidebarOpen && (
-        <div className="fixed right-0 top-0 bottom-0 w-80 bg-white shadow-lg z-50 p-6">
-          <h2 className="text-lg font-semibold mb-4">
-            {selectedBerita ? "Edit Berita" : "Tambah Berita"}
-          </h2>
-          <p className="text-sm text-gray-500">Form akan dibuat nanti.</p>
-          <button
-            onClick={handleCloseSidebar}
-            className="mt-6 text-sm text-red-600 hover:underline"
-          >
-            Tutup
-          </button>
-        </div>
+        <NewsFormSidebar
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+          initialData={selectedNews}
+          refreshNews={fetchBerita}
+        />
       )}
     </div>
   );
