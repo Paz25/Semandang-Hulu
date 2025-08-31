@@ -5,19 +5,27 @@ export async function PUT(req, { params }) {
   try {
     verifyTokenFromCookie(req);
 
-    const { id } = params;
     const { title, content, date, header_img } = await req.json();
+    const { id } = params;
 
-    if (!title || !content || !date) {
-      return new Response(JSON.stringify({ message: "Data tidak lengkap" }), {
-        status: 400,
-      });
+    if (!id || !title || !content || !date || !header_img) {
+      return new Response(
+        JSON.stringify({ message: "ID dan semua field wajib diisi" }),
+        { status: 400 }
+      );
     }
 
-    await db.query(
+    const result = await db.query(
       "UPDATE news SET title = $1, content = $2, date = $3, header_img = $4 WHERE id = $5",
       [title, content, date, header_img, id]
     );
+
+    if (result.rowCount === 0) {
+      return new Response(
+        JSON.stringify({ message: "Berita tidak ditemukan" }),
+        { status: 404 }
+      );
+    }
 
     return Response.json({ message: "Berita berhasil diperbarui" });
   } catch (err) {
@@ -32,10 +40,22 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     verifyTokenFromCookie(req);
-
     const { id } = params;
 
-    await db.query("DELETE FROM news WHERE id = $1", [id]);
+    if (!id) {
+      return new Response(JSON.stringify({ message: "ID wajib diisi" }), {
+        status: 400,
+      });
+    }
+
+    const result = await db.query("DELETE FROM news WHERE id = $1", [id]);
+
+    if (result.rowCount === 0) {
+      return new Response(
+        JSON.stringify({ message: "Berita tidak ditemukan" }),
+        { status: 404 }
+      );
+    }
 
     return Response.json({ message: "Berita berhasil dihapus" });
   } catch (err) {

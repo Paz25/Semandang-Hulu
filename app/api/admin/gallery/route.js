@@ -1,5 +1,4 @@
 import db from "@/lib/db";
-import { verifyTokenFromCookie } from "@/lib/auth";
 import { writeFile } from "fs/promises";
 import path from "path";
 

@@ -17,8 +17,6 @@ export default function GalleryManagementPage() {
     try {
       const res = await fetch("/api/admin/gallery");
       const data = await res.json();
-      console.log("Gallery data:", data); // 👈 tambahkan ini
-
       setGalleries(data);
     } catch (err) {
       toast.error("Gagal mengambil data galeri");

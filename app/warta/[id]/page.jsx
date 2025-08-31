@@ -2,12 +2,13 @@ import db from "@/lib/db";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export async function getData(id) {
   const result = await db.query("SELECT * FROM news WHERE id = $1", [id]);
 
   if (result.rowCount === 0) return null;
-  return result.rows[0]; 
+  return result.rows[0];
 }
 
 export default async function DetailBerita({ params }) {
@@ -18,7 +19,7 @@ export default async function DetailBerita({ params }) {
   return (
     <div>
       <Navbar />
-      <main className="max-w-3xl mx-auto p-6 pt-20">
+      <main className="max-w-3xl mx-auto p-6 py-30">
         <h1 className="text-2xl font-bold text-[#0a160d] mb-4">
           {berita.title}
         </h1>
@@ -42,6 +43,7 @@ export default async function DetailBerita({ params }) {
           {berita.content}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
